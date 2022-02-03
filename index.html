@@ -1,12 +1,98 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Coral Offices</title>
+    <meta name="description" content="Example of custom web-elements like checkboxes, options, maps, etc">
+    <!-- CHOICES -->
+    <!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css" /> -->
+    <!-- MAP -->
+    <script src="https://api-maps.yandex.ru/2.1/?apikey=ваш API-ключ&lang=ru_RU" type="text/javascript"></script>
+    <script type="module" src="./js/index.js"></script>
+    <!-- MAIN -->
+    <link rel="stylesheet" href="./css/style.css">
+    <title>Офисы Coral Travel</title>
 </head>
+
 <body>
-    <h1>Coral Offices</h1>
+    <div class="main">
+        <div class="main__container flex">
+
+            <!-- MAP -->
+            <div class="main__map map__wrapper wrapper">
+                <h2 class="map__heading hidden">Карта</h2>
+                <div class="map__body" id="map">
+                </div>
+                <script type="module">
+                    // Функция ymaps.ready() будет вызвана, когда
+                    // загрузятся все компоненты API, а также когда будет готово DOM-дерево.
+                    import { main } from './js/index.js';
+                    
+                    const markers = main();
+                    ymaps.ready(init);
+                    
+                    function init() {
+                    // Создание карты.
+                        var myMap = new ymaps.Map("map", {
+                        // Координаты центра карты.
+                        // Порядок по умолчанию: «широта, долгота».
+                        // Чтобы не определять координаты центра карты вручную,
+                        // воспользуйтесь инструментом Определение координат.
+                        center: [55.799175, 37.79913],
+                        // Уровень масштабирования. Допустимые значения:
+                        // от 0 (весь мир) до 19.
+                        zoom: 10,
+                        controls: []
+                        });
+
+                        markers.forEach(marker => {
+                            if (marker.coordinate) {
+                                
+                                const myPlacemark = new ymaps.GeoObject({
+                                    geometry: {
+                                        type: "Point",
+                                        coordinates: marker.coordinate
+                                    },
+                                    properties: {
+                                        // iconContent: 'Я тащусь',
+                                        hintContent: marker.address,
+                                        href: `https://yandex.ru/maps/?ll=${marker.coordinate[0]},${marker.coordinate[1]}&z=12`
+                                    },
+                                    options: {
+                                        hasBalloon: true
+                                    }
+                                });
+
+                                myMap.geoObjects.add(myPlacemark);
+                            } else {
+                                console.log('Нет координат', marker);
+                            }
+
+                        //   {
+                        //     // Свойства.
+                        //     // Содержимое хинта.
+                        //     hintContent: marker.address,
+                        //     // iconContent: 'test'
+                        //   }, 
+                        //   // {
+                        //   //   // Опции
+                        //   //   iconLayout: 'default#image',
+                        //   //   iconImageHref: './img/icons/marker.svg',
+                        //   //   // Размеры метки.
+                        //   //   iconImageSize: [28, 40],
+                        //   //   // Смещение левого верхнего угла иконки относительно
+                        //   //   // её "ножки" (точки привязки).
+                        //   //   iconImageOffset: [-14, -40]
+                        //   // }
+        
+                        });
+                    }
+                </script>
+            </div>
+        </div>
+    </div>
 </body>
+
 </html>
